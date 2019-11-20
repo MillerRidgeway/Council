@@ -2,6 +2,8 @@ import numpy as np
 import tensorflow as tf
 import keras
 import os
+
+
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
@@ -42,9 +44,6 @@ datagen = ImageDataGenerator(
     # set rescaling factor (applied before any other transformation)
     rescale=None,
 )
-
-
-
 
 def base_model(filters, name):
     c1 = Conv2D(filters, (3, 3), padding='same', name='base1_' + name, kernel_regularizer=regularizers.l2(weight_decay),
