@@ -1,5 +1,5 @@
+from src.Mixture import Mixture
 from src.Expert import Expert
-from src.SparseGate import SparseGate
 
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
@@ -37,6 +37,14 @@ x_train /= 255
 x_test /= 255
 
 labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+models = []
+for i in range(5):
+    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, "1")
+    models.append(tempExpert)
+
+
+#models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
 
 # Convert class vectors to binary class matrices.
 y_train = to_categorical(y_train, num_classes)

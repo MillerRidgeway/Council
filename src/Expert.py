@@ -27,8 +27,9 @@ num_classes = 10
 weight_decay = 1e-4
 
 class Expert(ModelFrame):
-    def __init__(self, x_train, y_train, x_test, y_test):
+    def __init__(self, x_train, y_train, x_test, y_test, filters, name):
         ModelFrame.__init__(self, x_train, y_train, x_test, y_test)
+        self.expertModel = self.base_model(filters, name)
 
     def base_model(self, filters, name):
         c1 = Conv2D(filters, (3, 3), padding='same', name='base1_' + name, kernel_regularizer=regularizers.l2(weight_decay),
