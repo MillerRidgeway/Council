@@ -111,7 +111,6 @@ def gatingNetwork():
     model = Model(inputs=inputs, outputs=c26)
     return model
 
-
 ''''
 pairs:
 0 (airplane) 8 (ship)
@@ -158,12 +157,8 @@ def train_base_models(weights_file_in):
                             validation_data=(x_val, y_val), callbacks=callbacks_list,
                             workers=4, verbose=2)
 
-
-
-
 # Loading base model weights
 def load_expert_weights_and_set_trainable_layers(model, experts,weights_file='lib/weights/base_model_'):
-
     for a in range(len(experts)):
         m = experts[a]
         file = weights_file + str(a) + '.h5'
@@ -181,7 +176,6 @@ def load_expert_weights_and_set_trainable_layers(model, experts,weights_file='li
         else:
             l.trainable = False
 
-
 def load_gate_weights(model, model_old,weights_file='lib/weights/moe_full.hdf5'):
     model_old.load_weights(weights_file)
     for l in model.layers:
@@ -190,12 +184,10 @@ def load_gate_weights(model, model_old,weights_file='lib/weights/moe_full.hdf5')
                     l.set_weights(b.get_weights())
                     print("loaded gate layer "+str(l.name))
 
-
-
 def gating_multiplier(gate,branches):
     forLambda=[gate]
     forLambda.extend(branches)
-    add= Lambda(lambda x:K.tf.transpose(
+    add = Lambda(lambda x:K.tf.transpose(
         sum(K.tf.transpose(forLambda[i]) *
             forLambda[0][:, i-1] for i in range(1,len(forLambda))
            )

@@ -19,13 +19,12 @@ from keras import regularizers
 from keras.callbacks import History
 from keras.optimizers import Adam
 
+#Training args
+batch_size = 50
+num_classes = 10
+weight_decay = 1e-4
+
 class SparseGate():
-
-    #Training args
-    batch_size = 50
-    num_classes = 10
-    weight_decay = 1e-4
-
     def __init__(self, x_train, y_train, x_test, y_test):
         self.x_train = x_train
         self.y_train = y_train
@@ -104,3 +103,11 @@ class SparseGate():
                     K.set_value(self.model.optimizer.lr, lr)
                     print("Learning rate reduced to: " + str(lr))
                     iterationsWithoutImprovement = 0
+
+    def load_gate_weights(self, model, model_old,weights_file='lib/weights/moe_full.hdf5'):
+        model_old.load_weights(weights_file)
+        for l in model.layers:
+                for b in model_old.layers:
+                    if (l.name == b.name):
+                        l.set_weights(b.get_weights())
+                        print("loaded gate layer "+str(l.name))
