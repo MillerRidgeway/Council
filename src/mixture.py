@@ -4,7 +4,7 @@ from sparse_gate import SparseGate
 class Mixture():
     def __init__(self, x_train, y_train, x_test, y_test, experts):
         self.gate = SparseGate(x_train, y_train, x_test, y_test)
-        self.gate.create_gate_model(experts)
+        self.gate.create_gate_model(experts[:0])
 
         self.experts = experts
         
@@ -28,7 +28,7 @@ class Mixture():
             else:
                 l.trainable = False
 
-    def train(self, datagen, weights_file_out):
+    def train_init(self, datagen, weights_file_out):
         self.load_expert_weights_and_set_trainable_layers()
         self.gate.train_gate(datagen, weights_file_out)
 

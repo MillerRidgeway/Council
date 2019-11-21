@@ -40,14 +40,14 @@ x_test /= 255
 experts = []
 for i in range(2):
     tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i))
-    experts.append(tempExpert.expertModel)
+    experts.append(tempExpert.base_model(32, str(i)))
 
 #Storage dir for MoE weights
 moe_weights_file='../lib/weights/moe_full'
 
 #Create MoE model and train it with two experts
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts)
-moeModel.train(datagen, moe_weights_file)
+moeModel.train_init(datagen, moe_weights_file)
 
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
 
