@@ -7,6 +7,7 @@ from keras.datasets import cifar10
 
 num_classes = 10
 
+#Data Loading
 datagen = ImageDataGenerator(
     featurewise_center=False,  # set input mean to 0 over the dataset
     samplewise_center=False,  # set each sample mean to 0
@@ -36,14 +37,15 @@ x_test = x_test.astype('float32')
 x_train /= 255
 x_test /= 255
 
-labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-
-models = []
+#Load experts
+experts = []
 for i in range(5):
     tempExpert = Expert(x_train,y_train,x_test,y_test, 32, "1")
-    models.append(tempExpert)
+    experts.append(tempExpert)
 
-
+#Create MoE model
+moeModel = Mixture(x_train, y_train, x_test, y_test, experts)
+moeModel.load_expert_weights_and_set_trainable_layers()
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
 
 # Convert class vectors to binary class matrices.
