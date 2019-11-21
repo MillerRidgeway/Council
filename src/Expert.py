@@ -2,7 +2,8 @@ import numpy as np
 import tensorflow as tf
 import keras
 import os
-from ModelFrame import ModelFrame
+
+from src.ModelFrame import ModelFrame
 
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
@@ -31,7 +32,7 @@ class Expert(ModelFrame):
 
     def base_model(self, filters, name):
         c1 = Conv2D(filters, (3, 3), padding='same', name='base1_' + name, kernel_regularizer=regularizers.l2(weight_decay),
-                    input_shape=super().x_train.shape[1:])(super().inputs)
+                    input_shape=self.x_train.shape[1:])(self.inputs)
         c2 = Activation('elu', name='base2_' + name)(c1)
         c3 = BatchNormalization(name='base3_' + name)(c2)
         c4 = Conv2D(filters, (3, 3), name='base4_' + name, padding='same',
@@ -66,5 +67,5 @@ class Expert(ModelFrame):
         c25 = Flatten(name='base25_' + name)(c24)
         c26 = Dense(num_classes, name='base26_' + name)(c25)
         c27 = Activation('softmax', name='base27_' + name)(c26)
-        return Model(inputs=super().inputs, outputs=c27)
+        return Model(inputs=self.inputs, outputs=c27)
         

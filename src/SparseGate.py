@@ -3,6 +3,8 @@ import tensorflow as tf
 import keras
 import os
 
+from src.ModelFrame import ModelFrame
+
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
@@ -24,16 +26,9 @@ batch_size = 50
 num_classes = 10
 weight_decay = 1e-4
 
-class SparseGate():
+class SparseGate(ModelFrame):
     def __init__(self, x_train, y_train, x_test, y_test):
-        self.x_train = x_train
-        self.y_train = y_train
-        self.x_test = x_test
-        self.y_test = y_test
-
-        self.inputs = Input(shape=x_train.shape[1:])
-
-        self.model = None
+        ModelFrame.__init__(self, x_train, y_train, x_test, y_test)
         
     def gatingNetwork(self):
         c1 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(weight_decay),
