@@ -1,5 +1,5 @@
-from src.Mixture import Mixture
-from src.Expert import Expert
+from expert import Expert
+from mixture import Mixture
 
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
@@ -39,8 +39,8 @@ x_test /= 255
 #Load init experts
 experts = []
 for i in range(2):
-    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, i)
-    experts.append(tempExpert.base_model)
+    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i))
+    experts.append(tempExpert.expertModel)
 
 #Storage dir for MoE weights
 moe_weights_file='../lib/weights/moe_full'
@@ -48,7 +48,6 @@ moe_weights_file='../lib/weights/moe_full'
 #Create MoE model and train it with two experts
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts)
 moeModel.train(datagen, moe_weights_file)
-
 
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
 

@@ -158,7 +158,7 @@ def train_base_models(weights_file_in):
                             workers=4, verbose=2)
 
 # Loading base model weights
-def load_expert_weights_and_set_trainable_layers(model, experts,weights_file='lib/weights/base_model_'):
+def load_expert_weights_and_set_trainable_layers(model, experts,weights_file='../lib/weights/base_model_'):
     for a in range(len(experts)):
         m = experts[a]
         file = weights_file + str(a) + '.h5'
@@ -176,7 +176,7 @@ def load_expert_weights_and_set_trainable_layers(model, experts,weights_file='li
         else:
             l.trainable = False
 
-def load_gate_weights(model, model_old,weights_file='lib/weights/moe_full.hdf5'):
+def load_gate_weights(model, model_old,weights_file='../lib/weights/moe_full.hdf5'):
     model_old.load_weights(weights_file)
     for l in model.layers:
             for b in model_old.layers:
@@ -254,7 +254,7 @@ if(train_base):
     train_base_models(base_weights_file)
 '''
 
-moe_weights_file='lib/weights/moe_full'
+moe_weights_file='../lib/weights/moe_full'
 for i in range(1,len(models)):
 
     model=create_gate_model(models[:i])
