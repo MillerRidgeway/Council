@@ -28,5 +28,12 @@ class Mixture():
             else:
                 l.trainable = False
 
-    def train(self, weightsFile):
-        return
+    def train(self, datagen, weights_file_out):
+        self.load_expert_weights_and_set_trainable_layers()
+        self.gate.train_gate(datagen, weights_file_out)
+
+    def add_expert(self, datagen, weights_file_in, model_prev, expert):
+        self.experts.append(expert)
+        self.gate.load_gate_weights(self.gate.model, model_prev)
+        self.load_expert_weights_and_set_trainable_layers()
+        self.gate.train_gate(self.gate,weights_file_in)

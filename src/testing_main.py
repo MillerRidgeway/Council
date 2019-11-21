@@ -29,7 +29,6 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
-
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
 x_train = x_train.astype('float32')
@@ -37,15 +36,20 @@ x_test = x_test.astype('float32')
 x_train /= 255
 x_test /= 255
 
-#Load experts
+#Load init experts
 experts = []
-for i in range(5):
-    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, "1")
-    experts.append(tempExpert)
+for i in range(2):
+    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, i)
+    experts.append(tempExpert.base_model)
 
-#Create MoE model
+#Storage dir for MoE weights
+moe_weights_file='../lib/weights/moe_full'
+
+#Create MoE model and train it with two experts
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts)
-moeModel.load_expert_weights_and_set_trainable_layers()
+moeModel.train(datagen, moe_weights_file)
+
+
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
 
 # Convert class vectors to binary class matrices.

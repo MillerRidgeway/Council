@@ -81,14 +81,14 @@ class SparseGate(ModelFrame):
         lr = .001
         for i in range(7):
             # load_weights()
-            self.model.fit_generator(datagen.flow(self.x_train, self.y_train, batch_size=50),
+            self.gateModel.fit_generator(datagen.flow(self.x_train, self.y_train, batch_size=50),
                                     epochs=1,
                                     steps_per_epoch=len(self.x_train) / 50,
                                     validation_data=(self.x_test, self.y_test), callbacks=[history],
                                     workers=4, verbose=1)
             val_acc = history.history['val_acc'][-1]
             if (val_acc > highest_acc):
-                self.model.save_weights(weights_file + '.hdf5')
+                self.gateModel.save_weights(weights_file + '.hdf5')
                 print("Saving weights, new highest accuracy: " + str(val_acc))
                 highest_acc = val_acc
                 iterationsWithoutImprovement = 0
@@ -96,11 +96,11 @@ class SparseGate(ModelFrame):
                 iterationsWithoutImprovement += 1
                 if (iterationsWithoutImprovement > 3):
                     lr *= .5
-                    K.set_value(self.model.optimizer.lr, lr)
+                    K.set_value(self.gateModel.optimizer.lr, lr)
                     print("Learning rate reduced to: " + str(lr))
                     iterationsWithoutImprovement = 0
 
-    def load_gate_weights(self, model, model_old,weights_file='lib/weights/moe_full.hdf5'):
+    def load_gate_weights(self, model, model_old,weights_file='../lib/weights/moe_full.hdf5'):
         model_old.load_weights(weights_file)
         for l in model.layers:
                 for b in model_old.layers:
