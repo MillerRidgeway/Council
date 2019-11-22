@@ -38,9 +38,10 @@ x_test /= 255
 
 #Load init experts
 experts = []
-for i in range(2):
+for i in (1, 5):
     tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i))
-    experts.append(tempExpert.base_model(32, str(i)))
+    experts.append(tempExpert.expertModel)
+    #print(tempExpert.expertModel.summary())
 
 #Storage dir for MoE weights
 moe_weights_file='../lib/weights/moe_full'
