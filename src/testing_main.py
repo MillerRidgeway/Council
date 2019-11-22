@@ -4,6 +4,7 @@ from mixture import Mixture
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 from keras.datasets import cifar10
+from keras.layers import Input
 
 num_classes = 10
 
@@ -36,10 +37,12 @@ x_test = x_test.astype('float32')
 x_train /= 255
 x_test /= 255
 
+inputs = Input(shape=x_train.shape[1:])
+
 #Load init experts
 experts = []
 for i in (1, 5):
-    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i))
+    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i), inputs)
     experts.append(tempExpert.expertModel)
     #print(tempExpert.expertModel.summary())
 
@@ -47,7 +50,7 @@ for i in (1, 5):
 moe_weights_file='../lib/weights/moe_full'
 
 #Create MoE model and train it with two experts
-moeModel = Mixture(x_train, y_train, x_test, y_test, experts)
+moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs)
 moeModel.train_init(datagen, moe_weights_file)
 
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]

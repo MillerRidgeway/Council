@@ -27,9 +27,10 @@ num_classes = 10
 weight_decay = 1e-4
 
 class SparseGate(ModelFrame):
-    def __init__(self, x_train, y_train, x_test, y_test):
+    def __init__(self, x_train, y_train, x_test, y_test, inputs):
         ModelFrame.__init__(self, x_train, y_train, x_test, y_test)
         self.gateModel = None
+        self.inputs = inputs
         
     def gating_network(self):
         c1 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(weight_decay),
@@ -58,13 +59,10 @@ class SparseGate(ModelFrame):
 
     def create_gate_model(self,expert_models):
         gate_network = self.gating_network()
-        print(gate_network.summary())
         merged = self.gating_multiplier(gate_network.layers[-1].output, [m.layers[-1].output for m in expert_models])
         b = Activation('softmax', name='gatex')(merged)
         model = Model(inputs=self.inputs, outputs=b)
         model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
-        print(model.summary())
-        self.gateModel = model
         return model
         
     def gating_multiplier(self,gate,branches):

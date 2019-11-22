@@ -27,13 +27,13 @@ num_classes = 10
 weight_decay = 1e-4
 
 class Expert(ModelFrame):
-    def __init__(self, x_train, y_train, x_test, y_test, filters, name):
+    def __init__(self, x_train, y_train, x_test, y_test, filters, name, inputs):
         ModelFrame.__init__(self, x_train, y_train, x_test, y_test)
-        self.expertModel = self.base_model(filters, name)
+        self.expertModel = self.base_model(filters, name, inputs)
 
-    def base_model(self, filters, name):
+    def base_model(self, filters, name, inputs):
         c1 = Conv2D(filters, (3, 3), padding='same', name='base1_' + name, kernel_regularizer=regularizers.l2(weight_decay),
-                    input_shape=self.x_train.shape[1:])(self.inputs)
+                    input_shape=self.x_train.shape[1:])(inputs)
         c2 = Activation('elu', name='base2_' + name)(c1)
         c3 = BatchNormalization(name='base3_' + name)(c2)
         c4 = Conv2D(filters, (3, 3), name='base4_' + name, padding='same',
@@ -68,5 +68,5 @@ class Expert(ModelFrame):
         c25 = Flatten(name='base25_' + name)(c24)
         c26 = Dense(num_classes, name='base26_' + name)(c25)
         c27 = Activation('softmax', name='base27_' + name)(c26)
-        return Model(inputs=self.inputs, outputs=c27)
+        return Model(inputs=inputs, outputs=c27)
         

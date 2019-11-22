@@ -246,8 +246,8 @@ labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse
 y_train = keras.utils.to_categorical(y_train, num_classes)
 y_test = keras.utils.to_categorical(y_test, num_classes)
 
-inputs0 = Input(shape=x_train.shape[1:])
-inputs2 = Input(shape=x_train.shape[1:])
+# inputs0 = Input(shape=x_train.shape[1:])
+# inputs2 = Input(shape=x_train.shape[1:])
 inputs = Input(shape=x_train.shape[1:])
 
 models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
@@ -263,7 +263,7 @@ if(train_base):
 moe_weights_file='../lib/weights/moe_full'
 
 model=create_gate_model(models[:1])
-print(inputs)
+#print(inputs)
 # for i in range(1,len(models)):
 #     #print(models[i].summary())
 #     model=create_gate_model(models[:i])
@@ -273,3 +273,5 @@ print(inputs)
     # load_expert_weights_and_set_trainable_layers(model, models[:i])
     # train_gate(model, moe_weights_file)
     # model_previous=model
+
+print(gatingNetwork().summary())
