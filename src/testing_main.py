@@ -44,18 +44,17 @@ experts = []
 for i in (1, 5):
     tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i), inputs)
     experts.append(tempExpert.expertModel)
-    #print(tempExpert.expertModel.summary())
 
 #Storage dir for MoE weights
 moe_weights_file='../lib/weights/moe_full'
+
+# Convert class vectors to binary class matrices.
+y_train = to_categorical(y_train, num_classes)
+y_test = to_categorical(y_test, num_classes)
 
 #Create MoE model and train it with two experts
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs)
 moeModel.train_init(datagen, moe_weights_file)
 
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
-
-# Convert class vectors to binary class matrices.
-y_train = to_categorical(y_train, num_classes)
-y_test = to_categorical(y_test, num_classes)
 

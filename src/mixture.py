@@ -8,7 +8,7 @@ class Mixture():
         
     def load_expert_weights_and_set_trainable_layers(self,weights_file='../lib/weights/base_model_'):
         model = self.gate.gateModel
-        
+        print(self.gate.gateModel.summary())
         for a in range(len(self.experts)):
             m = self.experts[a]
             file = weights_file + str(a) + '.h5'
@@ -30,11 +30,11 @@ class Mixture():
         #self.gate.gateModel = self.gate.create_gate_model(self.experts[:1])
       for i in range(1,len(self.experts)):
         self.gate.gateModel = self.gate.create_gate_model(self.experts[:i])
+        model_previous=self.gate
         if i>1:
             self.gate.load_gate_weights(self.gate,model_previous)
         self.load_expert_weights_and_set_trainable_layers()
-        self.gate.train_gate(datagen, weights_file_out)
-        model_previous=self.gate
+        self.gate.train_gate(datagen, weights_file_out) 
         self.load_expert_weights_and_set_trainable_layers()
         self.gate.train_gate(datagen, weights_file_out)
 
