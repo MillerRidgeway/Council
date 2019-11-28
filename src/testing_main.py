@@ -6,6 +6,8 @@ from keras.utils import to_categorical
 from keras.datasets import cifar10
 from keras.layers import Input
 
+from pyspark import SparkContext, SparkConf
+
 num_classes = 10
 
 #Data Loading
@@ -30,6 +32,11 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
+SparkContext.setSystemProperty('spark.executor.memory', '6g')
+conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[8]')
+sc = SparkContext(conf=conf)
+print(sc._conf.getAll())
+
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
 x_train = x_train.astype('float32')
@@ -53,7 +60,7 @@ y_train = to_categorical(y_train, num_classes)
 y_test = to_categorical(y_test, num_classes)
 
 #Create MoE model and train it with two experts
-moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs)
+moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs, sc)
 moeModel.train_init(datagen, moe_weights_file, experts[0])
 
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]

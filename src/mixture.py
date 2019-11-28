@@ -2,14 +2,13 @@ from expert import Expert
 from sparse_gate import SparseGate
 
 class Mixture():
-    def __init__(self, x_train, y_train, x_test, y_test, experts, inputs):
-        self.gate = SparseGate(x_train, y_train, x_test, y_test, inputs)
+    def __init__(self, x_train, y_train, x_test, y_test, experts, inputs, spark_context):
+        self.gate = SparseGate(x_train, y_train, x_test, y_test, inputs, spark_context)
         self.experts = experts
         self.model_previous = None
         
     def load_expert_weights_and_set_trainable_layers(self,weights_file='../lib/weights/base_model_'):
         model = self.gate.gateModel
-        print(self.gate.gateModel.summary())
         for a in range(len(self.experts)):
             m = self.experts[a]
             file = weights_file + str(a) + '.h5'
