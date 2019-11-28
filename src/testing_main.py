@@ -32,7 +32,7 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
-SparkContext.setSystemProperty('spark.executor.memory', '6g')
+SparkContext.setSystemProperty('spark.driver.memory', '6g')
 conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[8]')
 sc = SparkContext(conf=conf)
 print(sc._conf.getAll())
