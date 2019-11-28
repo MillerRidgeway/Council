@@ -5,6 +5,7 @@ class Mixture():
     def __init__(self, x_train, y_train, x_test, y_test, experts, inputs):
         self.gate = SparseGate(x_train, y_train, x_test, y_test, inputs)
         self.experts = experts
+        self.model_previous = None
         
     def load_expert_weights_and_set_trainable_layers(self,weights_file='../lib/weights/base_model_'):
         model = self.gate.gateModel
@@ -26,20 +27,14 @@ class Mixture():
             else:
                 l.trainable = False
 
-    def train_init(self, datagen, weights_file_out):
-        #self.gate.gateModel = self.gate.create_gate_model(self.experts[:1])
-      for i in range(1,len(self.experts)):
-        self.gate.gateModel = self.gate.create_gate_model(self.experts[:i])
-        model_previous=self.gate
-        if i>1:
-            self.gate.load_gate_weights(self.gate,model_previous)
+    def train_init(self, datagen, weights_file, init_expert):
+        self.gate.gateModel = self.gate.create_gate_model(self.experts[:1])
         self.load_expert_weights_and_set_trainable_layers()
-        self.gate.train_gate(datagen, weights_file_out) 
-        self.load_expert_weights_and_set_trainable_layers()
-        self.gate.train_gate(datagen, weights_file_out)
+        self.gate.train_gate(datagen, weights_file) 
 
-    def add_expert(self, datagen, weights_file_in, model_prev, expert):
+    def add_expert(self, datagen, weights_file, expert):
         self.experts.append(expert)
-        self.gate.load_gate_weights(self.gate.model, model_prev)
+        self.gate.load_gate_weights(self.gate.model, self.model_previous)
         self.load_expert_weights_and_set_trainable_layers()
-        self.gate.train_gate(self.gate,weights_file_in)
+        self.gate.train_gate(self.gate,weights_file)
+        self.model_previous = self.gate.gateModel
