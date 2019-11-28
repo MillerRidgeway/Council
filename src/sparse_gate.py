@@ -5,6 +5,8 @@ import os
 
 from model_frame import ModelFrame
 
+from elephas.spark_model import SparkModel
+
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
@@ -27,8 +29,8 @@ num_classes = 10
 weight_decay = 1e-4
 
 class SparseGate(ModelFrame):
-    def __init__(self, x_train, y_train, x_test, y_test, inputs):
-        ModelFrame.__init__(self, x_train, y_train, x_test, y_test)
+    def __init__(self, x_train, y_train, x_test, y_test, inputs, spark_context):
+        ModelFrame.__init__(self, x_train, y_train, x_test, y_test, spark_context)
         self.gateModel = None
         self.inputs = inputs
         
@@ -80,13 +82,13 @@ class SparseGate(ModelFrame):
         highest_acc = 0
         iterationsWithoutImprovement = 0
         lr = .001
+        model = self.gating_network()
+        model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
+        self.gateModel = SparkModel(model, frequency='epoch', mode='asynchronous')
         for i in range(7):
-            # load_weights()
-            self.gateModel.fit_generator(datagen.flow(self.x_train, self.y_train, batch_size=50),
-                                    epochs=1,
-                                    steps_per_epoch=len(self.x_train) / 50,
-                                    validation_data=(self.x_test, self.y_test), callbacks=[history],
-                                    workers=4, verbose=1)
+            self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1, 
+                                validation_split = 0.1)
+            self.gateModel = self.gateModel.master_network
             val_acc = history.history['val_acc'][-1]
             if (val_acc > highest_acc):
                 self.gateModel.save_weights(weights_file + '.hdf5')
