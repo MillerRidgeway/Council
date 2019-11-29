@@ -81,32 +81,13 @@ class SparseGate(ModelFrame):
         ))(forLambda)
         return add
 
-    def train_gate(self, datagen, weights_file, expert):
-        history = History()
-        highest_acc = 0
-        iterationsWithoutImprovement = 0
-        lr = .001
-
+    def train_gate(self, datagen, weights_file):
         model = self.gateModel
-        
         self.gateModel = SparkModel(model, frequency='epoch', mode='asynchronous')
-        for i in range(7):
-            self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1, 
+        self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1, 
                                 validation_split = 0.1)
-            self.gateModel = self.gateModel.master_network
-            val_acc = history.history['val_acc'][-1]
-            if (val_acc > highest_acc):
-                self.gateModel.save_weights(weights_file + '.hdf5')
-                print("Saving weights, new highest accuracy: " + str(val_acc))
-                highest_acc = val_acc
-                iterationsWithoutImprovement = 0
-            else:
-                iterationsWithoutImprovement += 1
-                if (iterationsWithoutImprovement > 3):
-                    lr *= .5
-                    K.set_value(self.gateModel.optimizer.lr, lr)
-                    print("Learning rate reduced to: " + str(lr))
-                    iterationsWithoutImprovement = 0
+        self.gateModel = self.gateModel.master_network
+        self.gateModel.save_weights(weights_file + '.hdf5')
 
     def load_gate_weights(self, model_old,weights_file='../lib/weights/moe_full.hdf5'):
         model_old.load_weights(weights_file)

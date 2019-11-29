@@ -28,11 +28,14 @@ class Mixture():
 
     def train_init(self, datagen, weights_file):
         for i in range(1, len(self.experts)):
+            print("---------------------------------------")
+            print(str(i) + " of " + str(len(self.experts)))
+            print("---------------------------------------")
             self.gate.gateModel = self.gate.create_gate_model(self.experts[:i])
             if i > 1:
                 self.gate.load_gate_weights(self.model_previous)
             self.load_expert_weights_and_set_trainable_layers()
-            self.gate.train_gate(datagen, weights_file, self.experts[:i]) 
+            self.gate.train_gate(datagen, weights_file) 
             self.model_previous = self.gate.gateModel
 
     def add_expert(self, datagen, weights_file, expert):

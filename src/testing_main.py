@@ -48,7 +48,7 @@ inputs = Input(shape=x_train.shape[1:])
 
 #Load init experts
 experts = []
-for i in (1, 5):
+for i in range(5):
     tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i), inputs)
     experts.append(tempExpert.expertModel)
 
