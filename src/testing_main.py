@@ -61,7 +61,7 @@ y_test = to_categorical(y_test, num_classes)
 
 #Create MoE model and train it with two experts
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs, sc)
-moeModel.train_init(datagen, moe_weights_file, experts[0])
+moeModel.train_init(datagen, moe_weights_file)
 
 #models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
 
