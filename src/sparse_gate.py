@@ -61,7 +61,11 @@ class SparseGate(ModelFrame):
 
     def create_gate_model(self,expert_models):
         gate_network = self.gating_network()
-        merged = self.gating_multiplier(gate_network.layers[-1].output, [m.layers[-1].output for m in expert_models])
+        merged = merged =Lambda(lambda x:K.tf.transpose(
+            sum(K.tf.transpose(x[i]) *
+                x[0][:, i-1] for i in range(1,len(x))
+            )
+        ))([gate_network.layers[-1].output]+[m.layers[-1].output for m in expert_models])
         b = Activation('softmax', name='gatex')(merged)
         model = Model(inputs=self.inputs, outputs=b)
         model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
@@ -83,11 +87,7 @@ class SparseGate(ModelFrame):
         iterationsWithoutImprovement = 0
         lr = .001
 
-        model = self.gating_network()
-        #merged = self.gating_multiplier(gate_network.layers[-1].output, [m.layers[-1].output for m in expert])
-        #b = Activation('softmax', name='gatex')(merged)
-        #model = Model(inputs=self.inputs, outputs=b)
-        model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
+        model = self.gateModel
         
         self.gateModel = SparkModel(model, frequency='epoch', mode='asynchronous')
         for i in range(7):
