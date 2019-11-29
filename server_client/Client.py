@@ -2,7 +2,7 @@
 import socket
 import time
 
-host = '127.0.0.1'
+host = '129.82.44.146'
 
 class Switcher(object):
     def indirect(self, i):
@@ -23,8 +23,19 @@ def file_sender(name):
     time.sleep(4)
 
     file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #file_socket.settimeout(10)
     # connect to server on local computer
-    file_socket.connect((host, file_transferring_port))
+    try_connection_for_x_times = int(3)
+    while(try_connection_for_x_times!=int(0)):
+        try:
+            file_socket.connect((host, file_transferring_port))
+            print("Client connected to the server")
+            try_connection_for_x_times = int(0)
+        except socket.error as exc:
+            print("Failed to connect : %s" % exc)
+            try_connection_for_x_times = try_connection_for_x_times - 1
+            time.sleep(4)
+
     file_location = input("File Location of " + name + ": ")
     f = open(file_location, 'rb')
     file_data = f.read(1024)
