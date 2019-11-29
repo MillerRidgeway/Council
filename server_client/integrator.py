@@ -4,8 +4,8 @@ import select
 import re
 import os
 import wordcount
+import globals
 
-default_hdfs_path = "/Ass3/"
 
 class file_dictionary(dict):
     # __init__ function

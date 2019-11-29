@@ -1,0 +1,14 @@
+from pyspark.sql import SparkSession
+
+host = ""
+
+spark_session = SparkSession.builder.appName('MOE').getOrCreate()
+
+user_name = "ms2718"
+
+default_hdfs_path = "/Ass3/"
+default_storage_path = "/tmp/"
+
+client_request_port = 50580
+
+file_receiving_port = 50581
