@@ -19,8 +19,8 @@ current_file_number = int(0)
 def file_name_generator(name):
     global current_file_number
     current_file_number += 1
-    file_name = "/tmp/" + name
-    file_name = file_name + str(current_file_number)
+    #file_name = globals.default_hdfs_path + name
+    file_name = name + str(current_file_number)
     return file_name
 
 
@@ -35,7 +35,7 @@ def file_reciever(name):
     f = open(storedFileName, 'wb')
 
     # receive data and write it to file
-    print("Writing a file")
+    print("Writing a file " + storedFileName)
     file_data = filesocket.recv(1024)
     while (file_data):
         f.write(file_data)
@@ -43,6 +43,7 @@ def file_reciever(name):
     f.close()
     filesocket.close()
     fileReciever.close()
+    time.sleep(4)
     return storedFileName
 
 
@@ -62,34 +63,36 @@ def threaded(c):
             # file_name_generator to generate file names
             generated_name = file_name_generator("MOE")
             # All File names will have same suffix
+            print("Generated name : " + generated_name)
             list_of_files_to_be_pushed_to_hdfs.append(generated_name)
-            list_of_files_to_be_pushed_to_hdfs.append(generated_name[:generated_name.rfind("/")+1] + "TOE" + re.findall(r'\d+', generated_name)[-1])
-            list_of_files_to_be_pushed_to_hdfs.append(
-                generated_name[:generated_name.rfind("/")+1] + "SOE" + re.findall(r'\d+', generated_name)[-1])
+            list_of_files_to_be_pushed_to_hdfs.append("TOE" + re.findall(r'\d+', generated_name)[-1])
+            list_of_files_to_be_pushed_to_hdfs.append("SOE" + re.findall(r'\d+', generated_name)[-1])
 
-            file_reciever(list_of_files_to_be_pushed_to_hdfs[0])
-            file_reciever(list_of_files_to_be_pushed_to_hdfs[1])
-            file_reciever(list_of_files_to_be_pushed_to_hdfs[2])
+            for file in list_of_files_to_be_pushed_to_hdfs:
+                print("Storing the incoming file in " + file)
+                file_reciever(globals.default_storage_path + file)
+
 
             for file in list_of_files_to_be_pushed_to_hdfs:
                 # After the files are received start pushing it to hdfs
-                start_new_thread(hdfs_uploader.hdfs_pusher, (file,))
+                start_new_thread(hdfs_uploader.hdfs_pusher, (globals.default_storage_path+file,))
 
         # To evaluate a input
         if data == b"2":
             print("Request for Evaluation")
             file_to_be_evaluated = file_name_generator("Evaluation")
             #list_of_files_to_be_pushed_to_hdfs.append()
-            file_reciever(file_to_be_evaluated)
-            hdfs_uploader.hdfs_pusher(file_to_be_evaluated)
-            wordcount.word_count(globals.spark_session, globals.default_hdfs_path + file_to_be_evaluated[file_to_be_evaluated.rfind("/"):])
+            file_reciever(globals.default_storage_path+file_to_be_evaluated)
+            hdfs_uploader.hdfs_pusher(globals.default_storage_path+file_to_be_evaluated)
+            wordcount.word_count(globals.spark_session, globals.default_hdfs_path + file_to_be_evaluated)
 
 
     c.close()
 
 
 def Main():
-
+    global current_file_number
+    current_file_number = hdfs_uploader.file_checker()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((globals.host, globals.client_request_port))
 
@@ -101,7 +104,9 @@ def Main():
     print("socket is waiting for Client to Join ....")
 
     # Checks if all 3 files are ready
-    start_new_thread(integrator.new_expert_trainer,(globals.spark_session,))
+    start_new_thread(integrator.new_expert_trainer,())
+
+    hdfs_uploader.file_checker()
 
     # a forever loop for n client connections
     while True:

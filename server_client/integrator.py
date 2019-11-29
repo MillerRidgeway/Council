@@ -33,8 +33,7 @@ def tail_file(thefile):
             continue
         yield line
 
-def new_expert_trainer(spark_session):
-    global default_hdfs_path
+def new_expert_trainer():
     print("inside funciton")
     filename = "file_uploaded.txt"
     if os.path.isfile(filename):
@@ -63,4 +62,4 @@ def new_expert_trainer(spark_session):
                         dict_obj.remove(values)
                         print("3 files are present, running the update")
 
-                        wordcount.word_count(spark_session, default_hdfs_path + "MOE" + values)
+                        wordcount.word_count(globals.spark_session, globals.default_hdfs_path + "MOE" + values)
