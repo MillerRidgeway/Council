@@ -70,16 +70,6 @@ class SparseGate(ModelFrame):
         model = Model(inputs=self.inputs, outputs=b)
         model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
         return model
-        
-    def gating_multiplier(self,gate,branches):
-        forLambda=[gate]
-        forLambda.extend(branches)
-        add= Lambda(lambda x:K.tf.transpose(
-            sum(K.tf.transpose(forLambda[i]) *
-                forLambda[0][:, i-1] for i in range(1,len(forLambda))
-            )
-        ))(forLambda)
-        return add
 
     def train_gate(self, datagen, weights_file):
         model = self.gateModel

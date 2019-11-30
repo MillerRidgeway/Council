@@ -32,8 +32,7 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
-SparkContext.setSystemProperty('spark.driver.memory', '6g')
-conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[8]')
+conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]')
 sc = SparkContext(conf=conf)
 print(sc._conf.getAll())
 
@@ -63,5 +62,16 @@ y_test = to_categorical(y_test, num_classes)
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs, sc)
 moeModel.train_init(datagen, moe_weights_file)
 
-#models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
+#Check accuracy
+preds = moeModel.gate.gateModel.predict(x_test)
+positives = 0
+negatives = 0
+for i in range(len(preds)):
+    if preds[i] == y_test[i]:
+        positives += 1
+    else:
+        negatives += 1
 
+print("Accuracy: " + str(positives / len(preds)))
+
+	
