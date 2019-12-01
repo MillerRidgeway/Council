@@ -10,13 +10,14 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
 from tensorflow.keras.models import Model
-from tensorflow.keras import backend as K
-from tensorflow.keras import models
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
+
 from tensorflow.keras.layers import BatchNormalization, Input
-from tensorflow.keras.layers import Concatenate
-from tensorflow.keras.layers.core import Dense, Dropout, Activation, Flatten, 
-from tensorflow.keras.layers import multiply, add
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import multiply
+from tensorflow.keras.layers import add
 from tensorflow.keras import regularizers
 from tensorflow.keras.callbacks import History
 from tensorflow.keras.optimizers import Adam

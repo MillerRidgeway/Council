@@ -7,21 +7,34 @@ from model_frame import ModelFrame
 
 from elephas.spark_model import SparkModel
 
-from tensorflow.keraas.datasets import cifar10
-from tensorflow.keraas.preprocessing.image import ImageDataGenerator
-from tensorflow.keraas.models import Sequential
-from tensorflow.keraas.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
-from tensorflow.keraas.models import Model
-from tensorflow.keraas import backend as K
-from tensorflow.keraas import models
-from tensorflow.keraas.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
-from tensorflow.keraas.layers import BatchNormalization, Input
-from tensorflow.keraas.layers import Concatenate
-from tensorflow.keraas.layers.core import Dense, Dropout, Activation, Flatten, Lambda
-from tensorflow.keraas.layers import multiply, add
-from tensorflow.keraas import regularizers
-from tensorflow.keraas.callbacks import History
-from tensorflow.keraas.optimizers import Adam
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.layers import Lambda
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import Reshape
+from tensorflow.keras.layers import Reshape
+
+from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
+from tensorflow.keras import models
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
+from tensorflow.keras.layers import BatchNormalization, Input
+from tensorflow.keras.layers import Concatenate
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Lambda
+from tensorflow.keras.layers import multiply, add
+from tensorflow.keras import regularizers
+from tensorflow.keras.callbacks import History
+from tensorflow.keras.optimizers import Adam
 
 #Training args
 batch_size = 50
