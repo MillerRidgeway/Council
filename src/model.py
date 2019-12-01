@@ -4,21 +4,21 @@ import keras
 import os
 
 
-from keras.datasets import cifar10
-from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Sequential
-from keras.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
-from keras.models import Model
-from keras import backend as K
-from keras import models
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
-from keras.layers import BatchNormalization, Input
-from keras.layers import Concatenate
-from keras.layers.core import Dense, Dropout, Activation, Flatten, Lambda
-from keras.layers import multiply, add
-from keras import regularizers
-from keras.callbacks import History
-from keras.optimizers import Adam
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
+from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
+from tensorflow.keras import models
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
+from tensorflow.keras.layers import BatchNormalization, Input
+from tensorflow.keras.layers import Concatenate
+from tensorflow.keras.layers.core import Dense, Dropout, Activation, Flatten, Lambda
+from tensorflow.keras.layers import multiply, add
+from tensorflow.keras import regularizers
+from tensorflow.keras.callbacks import History
+from tensorflow.keras.optimizers import Adam
 
 batch_size = 50
 num_classes = 10
@@ -201,7 +201,7 @@ def train_gate(model, weights_file):
         highest_acc = 0
         iterationsWithoutImprovement = 0
         lr = .001
-        for i in range(7):
+        for i in range(1):
             # load_weights()
             model.fit_generator(datagen.flow(x_train, y_train, batch_size=50),
                                        epochs=1,
@@ -225,7 +225,11 @@ def train_gate(model, weights_file):
 def create_gate_model(expert_models):
     gate_network = gatingNetwork()
     print(gate_network.summary())
-    merged = gating_multiplier(gate_network.layers[-1].output, [m.layers[-1].output for m in expert_models])
+    merged = merged = Lambda(lambda x: K.tf.transpose(
+        sum(K.tf.transpose(x[i]) *
+            x[0][:, i - 1] for i in range(1, len(x))
+            )
+    ))([gate_network.layers[-1].output] + [m.layers[-1].output for m in expert_models])
     print("--------------------")
     print(merged)
     b = Activation('softmax', name='gatex')(merged)
