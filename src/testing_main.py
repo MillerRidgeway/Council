@@ -1,12 +1,12 @@
 from expert import Expert
 from mixture import Mixture
 
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.datasets import cifar10
-from tensorflow.keras.layers import Input
+from keras.preprocessing.image import ImageDataGenerator
+from keras.utils import to_categorical
+from keras.datasets import cifar10
+from keras.layers import Input
 
-#from pyspark import SparkContext, SparkConf
+from pyspark import SparkContext, SparkConf
 
 num_classes = 10
 
@@ -32,10 +32,10 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
-#conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]')
-#sc = SparkContext(conf=conf)
-#print(sc._conf.getAll())
-sc=None
+conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]')
+sc = SparkContext(conf=conf)
+print(sc._conf.getAll())
+#sc=None
 
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 

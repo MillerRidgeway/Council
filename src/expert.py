@@ -5,22 +5,22 @@ import os
 
 from model_frame import ModelFrame
 
-from tensorflow.keras.datasets import cifar10
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
-from tensorflow.keras.models import Model
+from keras.datasets import cifar10
+from keras.preprocessing.image import ImageDataGenerator
+from keras.models import Sequential
+from keras.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
+from keras.models import Model
 
-from tensorflow.keras.layers import BatchNormalization, Input
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Activation
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import multiply
-from tensorflow.keras.layers import add
-from tensorflow.keras import regularizers
-from tensorflow.keras.callbacks import History
-from tensorflow.keras.optimizers import Adam
+from keras.layers import BatchNormalization, Input
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.layers import Flatten
+from keras.layers import multiply
+from keras.layers import add
+from keras import regularizers
+from keras.callbacks import History
+from keras.optimizers import Adam
 
 #Training args
 batch_size = 50

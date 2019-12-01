@@ -9,34 +9,34 @@ from elephas.spark_model import SparkModel
 
 
 import tensorflow as tf
-from tensorflow.keras.datasets import cifar10
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Activation
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import MaxPooling2D
-from tensorflow.keras.layers import Lambda
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.layers import Reshape
-from tensorflow.keras.layers import Reshape
+from keras.datasets import cifar10
+from keras.preprocessing.image import ImageDataGenerator
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.layers import Flatten
+from keras.layers import MaxPooling2D
+from keras.layers import Lambda
+from keras.layers import Conv2D
+from keras.layers import Reshape
+from keras.layers import Reshape
 
-from tensorflow.keras.models import Model
-from tensorflow.keras import backend as K
-from tensorflow.keras import models
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
-from tensorflow.keras.layers import BatchNormalization, Input
-from tensorflow.keras.layers import Concatenate
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Activation
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Lambda
-from tensorflow.keras.layers import multiply, add
-from tensorflow.keras import regularizers
-from tensorflow.keras.callbacks import History
-from tensorflow.keras.optimizers import Adam
+from keras.models import Model
+from keras import backend as K
+from keras import models
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
+from keras.layers import BatchNormalization, Input
+from keras.layers import Concatenate
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.layers import Flatten
+from keras.layers import Lambda
+from keras.layers import multiply, add
+from keras import regularizers
+from keras.callbacks import History
+from keras.optimizers import Adam
 
 #Training args
 batch_size = 50
