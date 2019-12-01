@@ -27,4 +27,6 @@ def file_checker():
         temp = re.findall(r'\d+', str(values))[-1]
         if int(temp) > max_value:
             max_value = int(temp)
+    if max_value == -1:
+        return 0
     return max_value

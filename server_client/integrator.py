@@ -61,5 +61,5 @@ def new_expert_trainer():
                         # run the MOE updating
                         dict_obj.remove(values)
                         print("3 files are present, running the update")
-
                         wordcount.word_count(globals.spark_session, globals.default_hdfs_path + "MOE" + values)
+

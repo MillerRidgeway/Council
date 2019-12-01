@@ -1,6 +1,7 @@
 # Import socket module
 import socket
 import time
+import os
 
 host = '129.82.44.146'
 
@@ -17,15 +18,16 @@ class Switcher(object):
         print("Option 2 is selected")
         return '2'
 
-def file_sender(name):
+
+def file_sender(name, file_transferring_port):
     global host
-    file_transferring_port = 50581
+    #file_transferring_port = 50581
     time.sleep(4)
 
     file_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #file_socket.settimeout(10)
     # connect to server on local computer
-    try_connection_for_x_times = int(3)
+    try_connection_for_x_times = int(5)
     while(try_connection_for_x_times!=int(0)):
         try:
             file_socket.connect((host, file_transferring_port))
@@ -36,7 +38,14 @@ def file_sender(name):
             try_connection_for_x_times = try_connection_for_x_times - 1
             time.sleep(4)
 
-    file_location = input("File Location of " + name + ": ")
+    file_exist = 1
+    while file_exist:
+        file_location = input("File Location of " + name + ": ")
+        if os.path.isfile(file_location):
+            file_exist = 0
+        else:
+            print("File Doesn't Exist!!!")
+
     f = open(file_location, 'rb')
     file_data = f.read(1024)
     while (file_data):
@@ -59,7 +68,7 @@ def Main():
     s.connect((host, port))
 
     # message you send to server
-
+    list = []
     message = ""
     while True:
         option = input('1. Add a Expert\n 2.Evaluation on cluster\n 3. Exit\n')
@@ -68,14 +77,20 @@ def Main():
 
         if message == '1':
             s.send(message.encode('ascii'))
-            file_sender("MOE")
-            file_sender("TOE")
-            file_sender("SOE")
+            port = s.recv(1024)
+            string_port = str(port.decode('ascii'))
+            list_port = string_port.split(":")
+            port = list_port[-2]
+            print("Sending data to server at port " + str(port))
+            file_sender("MOE", int(port))
+            file_sender("TOE", int(port))
+            file_sender("SOE", int(port))
             print("File Forwarded to the client")
 
         if message == '2':
             s.send(message.encode('ascii'))
-            file_sender("MOE")
+            port = s.recv(1024)
+            file_sender("MOE", int(port))
 
         if message == '3':
             break;
