@@ -74,8 +74,7 @@ class SparseGate(ModelFrame):
     def train_gate(self, datagen, weights_file):
         model = self.gateModel
         self.gateModel = SparkModel(model, frequency='epoch', mode='asynchronous')
-        self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1, 
-                                validation_split = 0.1)
+        self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1)
         self.gateModel = self.gateModel.master_network
         self.gateModel.save_weights(weights_file + '.hdf5')
 

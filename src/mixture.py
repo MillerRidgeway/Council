@@ -31,6 +31,7 @@ class Mixture():
             print("---------------------------------------")
             print(str(i) + " of " + str(len(self.experts)))
             print("---------------------------------------")
+            
             self.gate.gateModel = self.gate.create_gate_model(self.experts[:i])
             if i > 1:
                 self.gate.load_gate_weights(self.model_previous)
