@@ -10,13 +10,14 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
 from keras.models import Model
-from keras import backend as K
-from keras import models
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
+
 from keras.layers import BatchNormalization, Input
-from keras.layers import Concatenate
-from keras.layers.core import Dense, Dropout, Activation, Flatten, Lambda
-from keras.layers import multiply, add
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.layers import Flatten
+from keras.layers import multiply
+from keras.layers import add
 from keras import regularizers
 from keras.callbacks import History
 from keras.optimizers import Adam

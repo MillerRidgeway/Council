@@ -35,6 +35,7 @@ datagen = ImageDataGenerator(
 conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]')
 sc = SparkContext(conf=conf)
 print(sc._conf.getAll())
+#sc=None
 
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
