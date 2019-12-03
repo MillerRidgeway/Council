@@ -27,7 +27,7 @@ class Mixture():
                 l.trainable = False
 
     def train_init(self, datagen, weights_file):
-        for i in range(1, len(self.experts)):
+        for i in range(1, len(self.experts) + 1):
             print("---------------------------------------")
             print(str(i) + " of " + str(len(self.experts)))
             print("---------------------------------------")

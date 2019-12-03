@@ -49,7 +49,7 @@ inputs = Input(shape=x_train.shape[1:])
 #Load init experts
 experts = []
 for i in range(5):
-    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i), inputs)
+    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i + 1), inputs)
     experts.append(tempExpert.expertModel)
 
 #Storage dir for MoE weights
@@ -62,17 +62,5 @@ y_test = to_categorical(y_test, num_classes)
 #Create MoE model and train it with two experts
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs, sc)
 moeModel.train_init(datagen, moe_weights_file)
-
-#Check accuracy
-preds = moeModel.gate.gateModel.predict(x_test)
-positives = 0
-negatives = 0
-for i in range(len(preds)):
-    if preds[i] == y_test[i]:
-        positives += 1
-    else:
-        negatives += 1
-
-print("Accuracy: " + str(positives / len(preds)))
 
 	
