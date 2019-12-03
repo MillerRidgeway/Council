@@ -7,8 +7,6 @@ from model_frame import ModelFrame
 
 from elephas.spark_model import SparkModel
 
-
-import tensorflow as tf
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
