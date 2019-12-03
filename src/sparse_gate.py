@@ -5,17 +5,34 @@ import os
 
 from model_frame import ModelFrame
 
+from elephas.spark_model import SparkModel
+
+
+import tensorflow as tf
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers import Input, Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv2D, Reshape, Conv2DTranspose
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.layers import Flatten
+from keras.layers import MaxPooling2D
+from keras.layers import Lambda
+from keras.layers import Conv2D
+from keras.layers import Reshape
+from keras.layers import Reshape
+
 from keras.models import Model
 from keras import backend as K
 from keras import models
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from keras.layers import BatchNormalization, Input
 from keras.layers import Concatenate
-from keras.layers.core import Dense, Dropout, Activation, Flatten, Lambda
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.layers import Flatten
+from keras.layers import Lambda
 from keras.layers import multiply, add
 from keras import regularizers
 from keras.callbacks import History
@@ -27,8 +44,8 @@ num_classes = 10
 weight_decay = 1e-4
 
 class SparseGate(ModelFrame):
-    def __init__(self, x_train, y_train, x_test, y_test, inputs):
-        ModelFrame.__init__(self, x_train, y_train, x_test, y_test)
+    def __init__(self, x_train, y_train, x_test, y_test, inputs, spark_context):
+        ModelFrame.__init__(self, x_train, y_train, x_test, y_test, spark_context)
         self.gateModel = None
         self.inputs = inputs
         
@@ -59,47 +76,23 @@ class SparseGate(ModelFrame):
 
     def create_gate_model(self,expert_models):
         gate_network = self.gating_network()
-        merged = self.gating_multiplier(gate_network.layers[-1].output, [m.layers[-1].output for m in expert_models])
+        merged =Lambda(lambda x:K.tf.transpose(
+            sum(K.tf.transpose(x[i]) *
+                x[0][:, i-1] for i in range(1,len(x))
+            )
+        ))([gate_network.layers[-1].output]+[m.layers[-1].output for m in expert_models])
         b = Activation('softmax', name='gatex')(merged)
         model = Model(inputs=self.inputs, outputs=b)
         model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
         return model
-        
-    def gating_multiplier(self,gate,branches):
-        forLambda=[gate]
-        forLambda.extend(branches)
-        add= Lambda(lambda x:K.tf.transpose(
-            sum(K.tf.transpose(forLambda[i]) *
-                forLambda[0][:, i-1] for i in range(1,len(forLambda))
-            )
-        ))(forLambda)
-        return add
 
     def train_gate(self, datagen, weights_file):
-        history = History()
-        highest_acc = 0
-        iterationsWithoutImprovement = 0
-        lr = .001
-        for i in range(7):
-            # load_weights()
-            self.gateModel.fit_generator(datagen.flow(self.x_train, self.y_train, batch_size=50),
-                                    epochs=1,
-                                    steps_per_epoch=len(self.x_train) / 50,
-                                    validation_data=(self.x_test, self.y_test), callbacks=[history],
-                                    workers=4, verbose=1)
-            val_acc = history.history['val_acc'][-1]
-            if (val_acc > highest_acc):
-                self.gateModel.save_weights(weights_file + '.hdf5')
-                print("Saving weights, new highest accuracy: " + str(val_acc))
-                highest_acc = val_acc
-                iterationsWithoutImprovement = 0
-            else:
-                iterationsWithoutImprovement += 1
-                if (iterationsWithoutImprovement > 3):
-                    lr *= .5
-                    K.set_value(self.gateModel.optimizer.lr, lr)
-                    print("Learning rate reduced to: " + str(lr))
-                    iterationsWithoutImprovement = 0
+        model = self.gateModel
+        print(model.summary())
+        self.gateModel = SparkModel(model, frequency='epoch', mode='asynchronous')
+        self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1)
+        self.gateModel = self.gateModel.master_network
+        self.gateModel.save_weights(weights_file + '.hdf5')
 
     def load_gate_weights(self, model_old,weights_file='../lib/weights/moe_full.hdf5'):
         model_old.load_weights(weights_file)

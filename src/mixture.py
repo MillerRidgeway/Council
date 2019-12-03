@@ -2,14 +2,13 @@ from expert import Expert
 from sparse_gate import SparseGate
 
 class Mixture():
-    def __init__(self, x_train, y_train, x_test, y_test, experts, inputs):
-        self.gate = SparseGate(x_train, y_train, x_test, y_test, inputs)
+    def __init__(self, x_train, y_train, x_test, y_test, experts, inputs, spark_context):
+        self.gate = SparseGate(x_train, y_train, x_test, y_test, inputs, spark_context)
         self.experts = experts
         self.model_previous = None
         
     def load_expert_weights_and_set_trainable_layers(self,weights_file='../lib/weights/base_model_'):
         model = self.gate.gateModel
-        print(self.gate.gateModel.summary())
         for a in range(len(self.experts)):
             m = self.experts[a]
             file = weights_file + str(a) + '.h5'
@@ -23,12 +22,16 @@ class Mixture():
         for l in model.layers:
             if ('gate' in l.name or 'lambda' in l.name):
                 l.trainable = True
-                # print("training gate ")
+                print("trainable gate layer: "+str(l.name))
             else:
                 l.trainable = False
 
-    def train_init(self, datagen, weights_file, init_expert):
-        for i in range(1, len(self.experts)):
+    def train_init(self, datagen, weights_file):
+        for i in range(1, len(self.experts) + 1):
+            print("---------------------------------------")
+            print(str(i) + " of " + str(len(self.experts)))
+            print("---------------------------------------")
+            
             self.gate.gateModel = self.gate.create_gate_model(self.experts[:i])
             if i > 1:
                 self.gate.load_gate_weights(self.model_previous)

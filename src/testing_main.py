@@ -6,6 +6,8 @@ from keras.utils import to_categorical
 from keras.datasets import cifar10
 from keras.layers import Input
 
+from pyspark import SparkContext, SparkConf
+
 num_classes = 10
 
 #Data Loading
@@ -30,6 +32,11 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
+conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]')
+sc = SparkContext(conf=conf)
+print(sc._conf.getAll())
+#sc=None
+
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
 x_train = x_train.astype('float32')
@@ -41,8 +48,8 @@ inputs = Input(shape=x_train.shape[1:])
 
 #Load init experts
 experts = []
-for i in (1, 5):
-    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i), inputs)
+for i in range(5):
+    tempExpert = Expert(x_train,y_train,x_test,y_test, 32, str(i + 1), inputs)
     experts.append(tempExpert.expertModel)
 
 #Storage dir for MoE weights
@@ -53,8 +60,7 @@ y_train = to_categorical(y_train, num_classes)
 y_test = to_categorical(y_test, num_classes)
 
 #Create MoE model and train it with two experts
-moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs)
-moeModel.train_init(datagen, moe_weights_file, experts[0])
+moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs, sc)
+moeModel.train_init(datagen, moe_weights_file)
 
-#models=[base_model(32,"1"),base_model(32,"2"),base_model(32,"3"),base_model(32,"4"),base_model(32,"5")]
-
+	
