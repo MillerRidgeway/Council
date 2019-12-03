@@ -22,7 +22,7 @@ class Mixture():
         for l in model.layers:
             if ('gate' in l.name or 'lambda' in l.name):
                 l.trainable = True
-                # print("training gate ")
+                print("trainable gate layer: "+str(l.name))
             else:
                 l.trainable = False
 
