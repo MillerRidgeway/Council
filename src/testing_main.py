@@ -7,6 +7,9 @@ from keras.datasets import cifar10
 from keras.layers import Input
 
 from pyspark import SparkContext, SparkConf
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"]=""
 
 num_classes = 10
 
@@ -32,7 +35,7 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
-conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]')
+conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]').set(f"spark.executorEnv.CUDA_VISIBLE_DEVICES",' ')
 sc = SparkContext(conf=conf)
 print(sc._conf.getAll())
 #sc=None
@@ -63,4 +66,4 @@ y_test = to_categorical(y_test, num_classes)
 moeModel = Mixture(x_train, y_train, x_test, y_test, experts, inputs, sc)
 moeModel.train_init(datagen, moe_weights_file)
 
-	
+
