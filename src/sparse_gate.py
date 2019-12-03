@@ -76,7 +76,7 @@ class SparseGate(ModelFrame):
 
     def create_gate_model(self,expert_models):
         gate_network = self.gating_network()
-        merged = merged =Lambda(lambda x:K.tf.transpose(
+        merged =Lambda(lambda x:K.tf.transpose(
             sum(K.tf.transpose(x[i]) *
                 x[0][:, i-1] for i in range(1,len(x))
             )
