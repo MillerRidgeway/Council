@@ -35,7 +35,7 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
-conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[2]').set(f"spark.executorEnv.CUDA_VISIBLE_DEVICES",' ')
+conf = SparkConf().setAppName('Mnist_Spark_MLP')
 sc = SparkContext(conf=conf)
 print(sc._conf.getAll())
 #sc=None
