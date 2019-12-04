@@ -7,7 +7,7 @@ class Mixture():
         self.experts = experts
         self.model_previous = None
         
-    def load_expert_weights_and_set_trainable_layers(self,weights_file='../lib/weights/base_model_'):
+    def load_expert_weights_and_set_trainable_layers(self,weights_file='/s/chopin/b/grad/millerr/Projects/Council/lib/weights/base_model_'):
         model = self.gate.gateModel
         for a in range(len(self.experts)):
             m = self.experts[a]
