@@ -39,7 +39,7 @@ datagen = ImageDataGenerator(
     rescale=None,
 )
 
-conf = SparkConf().setAppName('Mnist_Spark_MLP')
+conf = SparkConf().setAppName('Train_Cifar')
 sc = SparkContext(conf=conf)
 print(sc._conf.getAll())
 #sc=None
