@@ -92,15 +92,15 @@ class SparseGate(ModelFrame):
         self.gateModel = self.gateModel.master_network
         self.gateModel.save_weights(weights_file + '.hdf5')
 
-        file = 'output.txt'
+        file = '../lib/output.txt'
         if os.path.exists(file):
             append_write = 'a'
         else:
             append_write = 'w'
 
-        score = self.gateModel.evaluate(self.x_test, self.y_test, verbose=2)
+        score = self.gateModel.evaluate(self.x_test, self.y_test, verbose=2, batch_size=50)
         print("Score is:" + str(score[1]))
-        text_file = open("../lib/output.txt", append_write)
+        text_file = open(file, append_write)
         text_file.write("Score: %s" % score[1])
         text_file.close()
 
