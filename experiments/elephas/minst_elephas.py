@@ -15,7 +15,7 @@ from pyspark import SparkContext, SparkConf
 # Define basic parameters
 batch_size = 64
 nb_classes = 10
-epochs = 1
+epochs = 5
 
 # Create Spark context
 conf = SparkConf().setAppName('Mnist_Spark_MLP').setMaster('local[8]')
@@ -51,26 +51,26 @@ sgd = SGD(lr=0.1)
 model.compile(sgd, 'categorical_crossentropy', ['acc'])
 
 
-model.fit(x_train, y_train, epochs=1, validation_split=0.1)
-print(model.metrics_names)
-print("Model score is: " + str(model.evaluate(x_test, y_test)[1]))
+# model.fit(x_train, y_train, epochs=1, validation_split=0.1)
+# print(model.metrics_names)
+# print("Model score is: " + str(model.evaluate(x_test, y_test)[1]))
 
 
-model_json = model.to_json()
-with open("mnist_test.json", "w") as json_file:
-    json_file.write(model_json)
+# model_json = model.to_json()
+# with open("mnist_test.json", "w") as json_file:
+#     json_file.write(model_json)
 
-model.save_weights("mnist_test.h5")
-print("Wrote model to disk")
+# model.save_weights("mnist_test.h5")
+# print("Wrote model to disk")
 
-# # Build RDD from numpy features and labels
-# rdd = to_simple_rdd(sc, x_train, y_train)
+# Build RDD from numpy features and labels
+rdd = to_simple_rdd(sc, x_train, y_train)
 
-# # Initialize SparkModel from Keras model and Spark context
-# spark_model = SparkModel(model, frequency='epoch', mode='asynchronous')
+# Initialize SparkModel from Keras model and Spark context
+spark_model = SparkModel(model, frequency='epoch', mode='asynchronous')
 
-# # Train Spark model
-# spark_model.fit(rdd, epochs=epochs, batch_size=batch_size, verbose=0, validation_split=0.1)
-# # Evaluate Spark model by evaluating the underlying model
-# score = spark_model.master_network.evaluate(x_test, y_test, verbose=2)
-# print('Test accuracy:', score[1])
+# Train Spark model
+spark_model.fit(rdd, epochs=epochs, batch_size=batch_size, verbose=0, validation_split=0.1)
+# Evaluate Spark model by evaluating the underlying model
+score = spark_model.master_network.evaluate(x_test, y_test, verbose=2)
+print('Test accuracy:', score[1])
