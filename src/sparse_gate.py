@@ -89,7 +89,8 @@ class SparseGate(ModelFrame):
         model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
         print(model.summary())
         self.gateModel = SparkModel(model, frequency='epoch', mode='asynchronous')
-        self.gateModel.fit(self.rdd, epochs=5, batch_size=50, verbose=1)
+        score = self.gateModel.master_network.evaluate(self.x_test, self.y_test, verbose=2, batch_size=50)
+        self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1)
         self.gateModel = self.gateModel.master_network
         self.gateModel.save_weights(weights_file + '.hdf5')
 
@@ -99,8 +100,10 @@ class SparseGate(ModelFrame):
         else:
             append_write = 'w'
 
-        score = self.gateModel.evaluate(self.x_test, self.y_test, verbose=2, batch_size=50)
+        #score = self.gateModel.evaluate(self.x_test, self.y_test, verbose=2, batch_size=50)
+        print("------------------------------")
         print("Score is:" + str(score[1]))
+        print("-------------------------------")
         text_file = open(file, append_write)
         text_file.write("Score: %s" % score[1])
         text_file.close()

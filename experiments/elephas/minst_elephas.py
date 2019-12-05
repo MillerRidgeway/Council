@@ -50,19 +50,6 @@ model.add(Activation('softmax'))
 sgd = SGD(lr=0.1)
 model.compile(sgd, 'categorical_crossentropy', ['acc'])
 
-
-# model.fit(x_train, y_train, epochs=1, validation_split=0.1)
-# print(model.metrics_names)
-# print("Model score is: " + str(model.evaluate(x_test, y_test)[1]))
-
-
-# model_json = model.to_json()
-# with open("mnist_test.json", "w") as json_file:
-#     json_file.write(model_json)
-
-# model.save_weights("mnist_test.h5")
-# print("Wrote model to disk")
-
 # Build RDD from numpy features and labels
 rdd = to_simple_rdd(sc, x_train, y_train)
 
