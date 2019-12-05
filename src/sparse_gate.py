@@ -88,9 +88,21 @@ class SparseGate(ModelFrame):
         model = self.gateModel
         print(model.summary())
         self.gateModel = SparkModel(model, frequency='epoch', mode='asynchronous')
-        self.gateModel.fit(self.rdd, epochs=1, batch_size=50, verbose=1)
+        self.gateModel.fit(self.rdd, epochs=5, batch_size=50, verbose=1)
         self.gateModel = self.gateModel.master_network
         self.gateModel.save_weights(weights_file + '.hdf5')
+
+        file = 'output.txt'
+        if os.path.exists(file):
+            append_write = 'a'
+        else:
+            append_write = 'w'
+
+        score = self.gateModel.evaluate(self.x_test, self.y_test, verbose=2)
+        print("Score is:" + str(score[1]))
+        text_file = open("../lib/output.txt", append_write)
+        text_file.write("Score: %s" % score[1])
+        text_file.close()
 
     def load_gate_weights(self, model_old,weights_file='../lib/weights/moe_full.hdf5'):
         model_old.load_weights(weights_file)
